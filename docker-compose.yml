@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    image: postgres:latest
+    build: ./database # Pfad zum Dockerfile für die Datenbank
     container_name: recipe-db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-recipe_user}
@@ -11,6 +11,21 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - recipe_network
+
+  backend:
+    build: ./backend
+    container_name: recipe-backend
+    ports:
+      - "8000:8000" # Beispielport für FastAPI
+    environment:
+      DATABASE_URL: "postgresql://recipe_user:${POSTGRES_PASSWORD}@db:5432/recipe_app"
+      # Weitere Umgebungsvariablen für dein Backend
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
     networks:
       - recipe_network
 
