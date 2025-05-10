@@ -1,10 +1,6 @@
 from sqlalchemy.orm import Session
 from .database import Base, engine
-from .models.models import Recipe, Ingredient, RecipeIngredient
-
-
-def create_tables():
-    Base.metadata.create_all(bind=engine)
+from .models import Recipe, Ingredient, RecipeIngredient
 
 
 def create_dummy_data(db: Session):
