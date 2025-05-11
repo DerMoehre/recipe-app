@@ -11,14 +11,13 @@ This project is a recipe application developed using the following technologies:
     * `app/`
         * `__init__.py`
         * `main.py`
-        * `models/`
+        * `models.py`
         * `database.py`
-        * `routers/`
-        * `schemas/`
+        * `routers.py`
+        * `schemas.py`
+        * `app.db`
     * `Dockerfile`
     * `requirements.txt`
-* `database/`
-    * `Dockerfile`
 * `docker-compose.yml`
 * `.env`
 * `.gitignore`
