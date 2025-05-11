@@ -4,7 +4,7 @@ This project is a recipe application developed using the following technologies:
 
 * **Frontend:** Angular
 * **Backend:** Python with FastAPI
-* **Database:** PostgreSQL (in Docker)
+* **Database:** SQLlite (in Docker)
 
 ## Folder Structure
 * `backend/`
@@ -38,31 +38,16 @@ The recommended way to start the backend and database in the development environ
 2.  Run the following command:
 
     ```bash
-    docker-compose up -d --build backend db
+    docker-compose up -d --build backend
     ```
 
     * `docker-compose up`: Starts the services defined in the `docker-compose.yml` file.
     * `-d`: Starts the containers in detached (background) mode.
-    * `--build backend db`: Rebuilds the Docker images for the backend and database if the `Dockerfile` or dependencies have changed.
+    * `--build backend`: Rebuilds the Docker images for the backend
 
-3.  Once started, the backend will be accessible at `http://localhost:8000` (this can be configured in the `docker-compose.yml`). The PostgreSQL database will be running on `localhost:5432`.
+3.  Once started, the backend will be accessible at `http://localhost:8000` (this can be configured in the `docker-compose.yml`).
 
-### Database Connection (for Development)
-
-For connecting to the PostgreSQL database in the development environment, use the following information:
-
-* **Host:** `localhost` or `127.0.0.1`
-* **Port:** `5432`
-* **Database:** The value set for `POSTGRES_DB` in your `.env` file.
-* **User:** The value set for `POSTGRES_USER` in your `.env` file.
-* **Password:** The value set for `POSTGRES_PASSWORD` in your `.env` file.
-
-Use a database tool like DBeaver to connect to the database and inspect tables or data.
 
 ### Test Data
 
-Currently, the database does not contain any initial test data. You can:
-
-* Manually insert data using a database tool (e.g., DBeaver).
-* Create SQL scripts and execute them against the database.
-* Implement seed functions in your backend to generate test data programmatically.
+For development, there are two endpoint routes to insert and delete test data to the db
