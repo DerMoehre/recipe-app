@@ -40,7 +40,7 @@ def create_ingredient(ingredient: IngredientCreate, db: Session = Depends(get_db
 
 
 @app.get("/ingridients/{ingredient_id}", response_model=Ingredient)
-def read_ingredient(ingredient_id: int, db: Session = Depends(get_db)):
+def read_ingredient(ingredient_id: str, db: Session = Depends(get_db)):
     db_ingredient = routes.get_ingredient(db=db, ingredient_id=ingredient_id)
     if not db_ingredient:
         raise HTTPException(status_code=404, detail="Zutat nicht gefunden")
@@ -54,7 +54,7 @@ def read_ingredients(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 
 @app.put("/ingridients/{ingredient_id}", response_model=Ingredient)
 def update_ingredient(
-    ingredient_id: int, ingredient: IngredientUpdate, db: Session = Depends(get_db)
+    ingredient_id: str, ingredient: IngredientUpdate, db: Session = Depends(get_db)
 ):
     updated_ingredient = routes.update_ingredient(
         db=db, ingredient_id=ingredient_id, ingredient=ingredient
@@ -65,7 +65,7 @@ def update_ingredient(
 
 
 @app.delete("/ingridients/{ingredient_id}", response_model=Ingredient)
-def delete_ingredient(ingredient_id: int, db: Session = Depends(get_db)):
+def delete_ingredient(ingredient_id: str, db: Session = Depends(get_db)):
     deleted_ingredient = routes.delete_ingredient(db=db, ingredient_id=ingredient_id)
     if not deleted_ingredient:
         raise HTTPException(status_code=404, detail="Zutat nicht gefunden")

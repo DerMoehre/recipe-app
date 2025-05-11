@@ -6,7 +6,7 @@ from fastapi import HTTPException
 
 
 # --- INGREDIENTS ---
-def get_ingredient(db: Session, ingredient_id: int):
+def get_ingredient(db: Session, ingredient_id: str):
     return (
         db.query(models.Ingredient)
         .filter(models.Ingredient.id == ingredient_id)
@@ -35,7 +35,7 @@ def create_ingredient(db: Session, ingredient: IngredientCreate):
     return db_ingredient
 
 
-def update_ingredient(db: Session, ingredient_id: int, ingredient: IngredientUpdate):
+def update_ingredient(db: Session, ingredient_id: str, ingredient: IngredientUpdate):
     db_ingredient = (
         db.query(models.Ingredient)
         .filter(models.Ingredient.id == ingredient_id)
@@ -50,7 +50,7 @@ def update_ingredient(db: Session, ingredient_id: int, ingredient: IngredientUpd
     return db_ingredient
 
 
-def delete_ingredient(db: Session, ingredient_id: int):
+def delete_ingredient(db: Session, ingredient_id: str):
     db_ingredient = (
         db.query(models.Ingredient)
         .filter(models.Ingredient.id == ingredient_id)

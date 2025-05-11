@@ -17,7 +17,7 @@ class IngredientUpdate(IngredientBase):
 
 
 class Ingredient(IngredientBase):
-    id: int
+    id: str
 
     class Config:
         orm_mode = True
@@ -30,8 +30,8 @@ class RecipeIngredientBase(BaseModel):
 
 
 class RecipeIngredientCreate(RecipeIngredientBase):
-    recipe_id: int
-    ingredient_id: int
+    recipe_id: str
+    ingredient_id: str
 
 
 class RecipeIngredientUpdate(RecipeIngredientBase):
@@ -39,8 +39,8 @@ class RecipeIngredientUpdate(RecipeIngredientBase):
 
 
 class RecipeIngredient(RecipeIngredientBase):
-    recipe_id: int
-    ingredient_id: int
+    recipe_id: str
+    ingredient_id: str
 
     class Config:
         orm_mode = True
@@ -65,7 +65,7 @@ class RecipeUpdate(RecipeBase):
 
 
 class Recipe(RecipeBase):
-    id: int
+    id: str
     created_at: datetime
     updated_at: datetime
     ingredients: List[Ingredient] = []
