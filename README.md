@@ -15,7 +15,7 @@ This project is a recipe application developed using the following technologies:
         * `database.py`
         * `routers.py`
         * `schemas.py`
-        * `app.db`
+    * `app.db`
     * `Dockerfile`
     * `requirements.txt`
 * `docker-compose.yml`
