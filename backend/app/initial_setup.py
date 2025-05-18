@@ -67,6 +67,7 @@ def create_dummy_data(db: Session):
             "Dressing nach Wahl zubereiten.",
             "Alle Zutaten in einer Schüssel vermengen und mit dem Dressing beträufeln.",
         ],
+        calories=300,
         prep_time=10,
         cook_time=0,
         servings=2,
@@ -89,6 +90,7 @@ def create_dummy_data(db: Session):
                              "Tomaten hinzufügen und köcheln lassen.",
                              "Mit Salz, Pfeffer und Kräutern würzen."
         ],
+        calories=None,
         prep_time=15,
         cook_time=20,
         servings=4,

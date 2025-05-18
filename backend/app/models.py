@@ -15,6 +15,7 @@ class Recipe(Base):
     description = Column(Text)
     instructions = Column(PickleType, nullable=False)
     sauce_instructions = Column(PickleType)
+    calories = Column(Integer)
     prep_time = Column(Integer)
     cook_time = Column(Integer)
     servings = Column(Integer)
