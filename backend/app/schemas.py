@@ -33,7 +33,7 @@ class UnitUpdate(UnitBase):
     pass
 
 class Unit(UnitBase):
-    id: int
+    id: str
 
     class Config:
         orm_mode = True
