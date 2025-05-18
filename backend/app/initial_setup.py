@@ -1,19 +1,19 @@
 from sqlalchemy.orm import Session
 from .database import Base, engine
-from .models import Recipe, Ingredient, RecipeIngredient, Units, Tags, RecipeTag
+from .models import Recipe, Ingredient, RecipeIngredient, Unit, Tag, RecipeTag
 from uuid import uuid4
 
 
 def create_dummy_data(db: Session):
     # Einheiten erstellen
-    unit_kopf = Units(name="Kopf")
-    unit_mittel = Units(name="mittel")
-    unit_g = Units(name="g")
-    unit_ml = Units(name="ml")
-    unit_el = Units(name="EL")
-    unit_tl = Units(name="TL")
-    unit_stueck = Units(name="Stück")
-    unit_zehen = Units(name="Zehen")
+    unit_kopf = Unit(name="Kopf")
+    unit_mittel = Unit(name="mittel")
+    unit_g = Unit(name="g")
+    unit_ml = Unit(name="ml")
+    unit_el = Unit(name="EL")
+    unit_tl = Unit(name="TL")
+    unit_stueck = Unit(name="Stück")
+    unit_zehen = Unit(name="Zehen")
     db.add_all([unit_kopf, unit_mittel, unit_g, unit_ml, unit_el, unit_tl, unit_stueck, unit_zehen])
     db.commit()
     db.refresh(unit_kopf)
@@ -26,13 +26,13 @@ def create_dummy_data(db: Session):
     db.refresh(unit_zehen)
 
     # Tags erstellen
-    tag_salat = Tags(name="Salat")
-    tag_pasta = Tags(name="Pasta")
-    tag_vegetarisch = Tags(name="vegetarisch")
-    tag_einfach = Tags(name="einfach")
-    tag_schnell = Tags(name="schnell")
-    tag_italienisch = Tags(name="italienisch")
-    tag_sauce = Tags(name="Sauce")
+    tag_salat = Tag(name="Salat")
+    tag_pasta = Tag(name="Pasta")
+    tag_vegetarisch = Tag(name="vegetarisch")
+    tag_einfach = Tag(name="einfach")
+    tag_schnell = Tag(name="schnell")
+    tag_italienisch = Tag(name="italienisch")
+    tag_sauce = Tag(name="Sauce")
     db.add_all([tag_salat, tag_pasta, tag_vegetarisch, tag_einfach, tag_schnell, tag_italienisch, tag_sauce])
     db.commit()
     db.refresh(tag_salat)
@@ -61,7 +61,12 @@ def create_dummy_data(db: Session):
     recipe1 = Recipe(
         name="Einfacher Salat",
         description="Ein schneller und gesunder Salat.",
-        instructions="Alle Zutaten waschen und schneiden. Dressing mischen. Alles vermengen.",
+        instructions=[
+            "Salat waschen und in mundgerechte Stücke zupfen.",
+            "Tomaten und Zwiebeln schneiden.",
+            "Dressing nach Wahl zubereiten.",
+            "Alle Zutaten in einer Schüssel vermengen und mit dem Dressing beträufeln.",
+        ],
         prep_time=10,
         cook_time=0,
         servings=2,
@@ -70,7 +75,20 @@ def create_dummy_data(db: Session):
     recipe2 = Recipe(
         name="Pasta mit Tomatensoße",
         description="Ein klassisches italienisches Gericht.",
-        instructions="Pasta kochen. Zwiebeln und Knoblauch anbraten. Tomaten hinzufügen und köcheln lassen. Mit Pasta vermischen.",
+        instructions=[
+            "Wasser für die Pasta zum Kochen bringen und salzen.",
+            "Pasta nach Packungsanweisung kochen.",
+            "Für die Soße: Zwiebel schälen und würfeln.",
+            "Knoblauch schälen und fein hacken.",
+            "Zwiebel und Knoblauch in Olivenöl anbraten.",
+            "Tomaten (passiert oder stückig) hinzufügen und köcheln lassen.",
+            "Mit Salz, Pfeffer und italienischen Kräutern würzen.",
+            "Gekochte Pasta abgießen und zur Soße geben. Gut vermischen.",
+        ],
+        sauce_instructions= ["Für die Tomatensoße: Zwiebeln und Knoblauch anbraten.", 
+                             "Tomaten hinzufügen und köcheln lassen.",
+                             "Mit Salz, Pfeffer und Kräutern würzen."
+        ],
         prep_time=15,
         cook_time=20,
         servings=4,
@@ -119,8 +137,8 @@ def delete_all_dummy_data(db: Session):
         db.query(RecipeTag).delete()
         db.query(Recipe).delete()
         db.query(Ingredient).delete()
-        db.query(Tags).delete()
-        db.query(Units).delete()
+        db.query(Tag).delete()
+        db.query(Unit).delete()
         db.commit()
         return {"message": "Alle Dummy-Daten wurden gelöscht."}
     except Exception as e:

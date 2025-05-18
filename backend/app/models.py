@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, Integer, String, Text, Float, DateTime, ForeignKey
+from sqlalchemy.types import PickleType
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from .database import Base
@@ -12,7 +13,8 @@ class Recipe(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, nullable=False)
     description = Column(Text)
-    instructions = Column(Text, nullable=False)
+    instructions = Column(PickleType, nullable=False)
+    sauce_instructions = Column(PickleType)
     prep_time = Column(Integer)
     cook_time = Column(Integer)
     servings = Column(Integer)
@@ -30,7 +32,7 @@ class Recipe(Base):
     )
 
     tags = relationship("Tag", secondary="recipe_tags", back_populates="recipes")
-
+    recipe_tags = relationship("RecipeTag", back_populates="recipe")
 
 class Ingredient(Base):
     __tablename__ = "ingredients"
@@ -48,15 +50,16 @@ class Ingredient(Base):
         overlaps="recipe_ingredients",
     )
 
-class Tags(Base):
+class Tag(Base):
     __tablename__ = "tags"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, unique=True, nullable=False)
 
     recipes = relationship("Recipe", secondary="recipe_tags", back_populates="tags")
+    recipe_tags = relationship("RecipeTag", back_populates="tag")
 
-class Units(Base):
+class Unit(Base):
     __tablename__ = "units"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -75,7 +78,7 @@ class RecipeIngredient(Base):
     quantity = Column(Float)
 
     unit = relationship(
-        "Units", back_populates="recipe_ingredients", overlaps="ingredients,recipes"
+        "Unit", back_populates="recipe_ingredients", overlaps="ingredients,recipes"
     )
     recipe = relationship(
         "Recipe", back_populates="recipe_ingredients", overlaps="ingredients,recipes"
@@ -92,6 +95,6 @@ class RecipeTag(Base):
     recipe_id = Column(String(36), ForeignKey("recipes.id"), primary_key=True)
     tag_id = Column(String(36), ForeignKey("tags.id"), primary_key=True)
 
-    recipe = relationship("Recipe", back_populates="tags")
-    tag = relationship("Tag", back_populates="recipes")
+    recipe = relationship("Recipe", back_populates="recipe_tags")
+    tag = relationship("Tag", back_populates="recipe_tags")
 

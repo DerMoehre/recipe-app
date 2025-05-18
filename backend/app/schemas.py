@@ -83,7 +83,8 @@ class RecipeIngredient(RecipeIngredientBase):
 class RecipeBase(BaseModel):
     name: str
     description: Optional[str] = None
-    instructions: str
+    instructions: List[str]
+    sauce_instructions: List[str] = []
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None
     servings: Optional[int] = None
