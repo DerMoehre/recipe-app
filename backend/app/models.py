@@ -29,6 +29,8 @@ class Recipe(Base):
         overlaps="recipe_ingredients",
     )
 
+    tags = relationship("Tag", secondary="recipe_tags", back_populates="recipes")
+
 
 class Ingredient(Base):
     __tablename__ = "ingredients"
@@ -46,15 +48,35 @@ class Ingredient(Base):
         overlaps="recipe_ingredients",
     )
 
+class Tags(Base):
+    __tablename__ = "tags"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, unique=True, nullable=False)
+
+    recipes = relationship("Recipe", secondary="recipe_tags", back_populates="tags")
+
+class Units(Base):
+    __tablename__ = "units"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String, unique=True, nullable=False)
+
+    recipe_ingredients = relationship(
+        "RecipeIngredient", back_populates="unit", cascade="all, delete-orphan"
+    )
 
 class RecipeIngredient(Base):
     __tablename__ = "recipe_ingredients"
 
     recipe_id = Column(String(36), ForeignKey("recipes.id"), primary_key=True)
     ingredient_id = Column(String(36), ForeignKey("ingredients.id"), primary_key=True)
+    unit_id = Column(String(36), ForeignKey("units.id"))
     quantity = Column(Float)
-    unit = Column(String)
 
+    unit = relationship(
+        "Units", back_populates="recipe_ingredients", overlaps="ingredients,recipes"
+    )
     recipe = relationship(
         "Recipe", back_populates="recipe_ingredients", overlaps="ingredients,recipes"
     )
@@ -63,3 +85,13 @@ class RecipeIngredient(Base):
         back_populates="recipe_ingredients",
         overlaps="ingredients,recipes",
     )
+
+class RecipeTag(Base):
+    __tablename__ = "recipe_tags"
+
+    recipe_id = Column(String(36), ForeignKey("recipes.id"), primary_key=True)
+    tag_id = Column(String(36), ForeignKey("tags.id"), primary_key=True)
+
+    recipe = relationship("Recipe", back_populates="tags")
+    tag = relationship("Tag", back_populates="recipes")
+
