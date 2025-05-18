@@ -22,6 +22,37 @@ class Ingredient(IngredientBase):
     class Config:
         orm_mode = True
 
+# Unit Schemas
+class UnitBase(BaseModel):
+    name: str
+
+class UnitCreate(UnitBase):
+    pass
+
+class UnitUpdate(UnitBase):
+    pass
+
+class Unit(UnitBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+# Tag Schemas
+class TagBase(BaseModel):
+    name: str
+
+class TagCreate(TagBase):
+    pass
+
+class TagUpdate(TagBase):
+    pass
+
+class Tag(TagBase):
+    id: str
+
+    class Config:
+        orm_mode = True
 
 # RecipeIngredient Schemas
 class RecipeIngredientBase(BaseModel):
@@ -41,6 +72,8 @@ class RecipeIngredientUpdate(RecipeIngredientBase):
 class RecipeIngredient(RecipeIngredientBase):
     recipe_id: str
     ingredient_id: str
+    unit_id: str
+    unit: Optional[Unit] = None
 
     class Config:
         orm_mode = True
@@ -50,18 +83,21 @@ class RecipeIngredient(RecipeIngredientBase):
 class RecipeBase(BaseModel):
     name: str
     description: Optional[str] = None
-    instructions: str
+    instructions: List[str]
+    sauce_instructions: List[str] = []
+    calories: Optional[int] = None
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None
     servings: Optional[int] = None
+    tags: List[Tag] = []
 
 
 class RecipeCreate(RecipeBase):
-    pass
+    tags: List[str] = []
 
 
 class RecipeUpdate(RecipeBase):
-    pass
+    tags: List[str] = []
 
 
 class Recipe(RecipeBase):
@@ -69,6 +105,7 @@ class Recipe(RecipeBase):
     created_at: datetime
     updated_at: datetime
     ingredients: List[Ingredient] = []
+    tags: List[Tag] = []
 
     class Config:
         orm_mode = True
