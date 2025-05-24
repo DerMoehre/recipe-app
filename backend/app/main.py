@@ -13,7 +13,8 @@ from .schemas import (
     UnitUpdate,
     Tag,
     TagCreate,
-    TagUpdate
+    TagUpdate,
+    Recipe
 )
 
 app = FastAPI()
@@ -151,3 +152,11 @@ def delete_tag(tag_id: str, db: Session = Depends(get_db)):
     if not deleted_tag:
         raise HTTPException(status_code=404, detail="Tag nicht gefunden")
     return deleted_tag
+
+# --- RECIPES ---
+@app.get("/recipes/{recipe_id}", response_model=Recipe, tags=["Recipes"])
+def read_recipe(recipe_id: str, db: Session = Depends(get_db)):
+    db_recipe = routes.get_recipe(db=db, recipe_id=recipe_id)
+    if not db_recipe:
+        raise HTTPException(status_code=404, detail="Rezept nicht gefunden")
+    return db_recipe

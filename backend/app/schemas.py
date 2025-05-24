@@ -84,17 +84,16 @@ class RecipeBase(BaseModel):
     name: str
     description: Optional[str] = None
     instructions: List[str]
-    sauce_instructions: List[str] = []
+    sauce_instructions: Optional[List[str]] = []
     calories: Optional[int] = None
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None
     servings: Optional[int] = None
-    tags: List[Tag] = []
+    #tags: List[Tag] = []
 
 
 class RecipeCreate(RecipeBase):
     tags: List[str] = []
-
 
 class RecipeUpdate(RecipeBase):
     tags: List[str] = []

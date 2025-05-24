@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from .database import Base, engine
 from . import models
 from .schemas import (
@@ -183,3 +183,17 @@ def delete_tag(db: Session, tag_id: str):
     db.delete(db_tag)
     db.commit()
     return db_tag
+
+
+# --- RECIPE ---#
+def get_recipe(db:Session, recipe_id: str):
+    return (
+        db.query(models.Recipe)
+        .options(
+            selectinload(models.Recipe.recipe_ingredients).selectinload(models.RecipeIngredient.ingredient),
+            selectinload(models.Recipe.recipe_ingredients).selectinload(models.RecipeIngredient.unit),
+            selectinload(models.Recipe.tags)
+        )
+        .filter(models.Recipe.id == recipe_id)
+        .first()
+    )
