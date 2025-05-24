@@ -10,7 +10,10 @@ from .schemas import (
     IngredientUpdate,
     Unit,
     UnitCreate,
-    UnitUpdate
+    UnitUpdate,
+    Tag,
+    TagCreate,
+    TagUpdate
 )
 
 app = FastAPI()
@@ -105,9 +108,46 @@ def update_unit(
     return updated_unit
 
 
-@app.delete("/units/{unitt_id}", response_model=Unit, tags=["Units"])
+@app.delete("/units/{unit_id}", response_model=Unit, tags=["Units"])
 def delete_unit(unit_id: str, db: Session = Depends(get_db)):
     deleted_unit = routes.delete_unit(db=db, unit_id=unit_id)
     if not deleted_unit:
         raise HTTPException(status_code=404, detail="Einheit nicht gefunden")
     return deleted_unit
+
+# --- TAGS ---
+@app.post("/tags/", response_model=Tag, tags=["Tags"])
+def create_tag(tag: TagCreate, db: Session = Depends(get_db)):
+    return routes.create_tag(db=db, tag=tag)
+
+
+@app.get("/tags/{tag_id}", response_model=Tag, tags=["Tags"])
+def read_tag(tag_id: str, db: Session = Depends(get_db)):
+    db_tag = routes.get_tag(db=db, tag_id=tag_id)
+    if not db_tag:
+        raise HTTPException(status_code=404, detail="Tag nicht gefunden")
+    return db_tag
+
+
+@app.get("/tags/", response_model=list[Tag], tags=["Tags"])
+def read_tags(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return routes.get_all_tags(db=db, skip=skip, limit=limit)
+
+@app.put("/tags/{tag_id}", response_model=Tag, tags=["Tags"])
+def update_tag(
+    tag_id: str, tag: TagUpdate, db: Session = Depends(get_db)
+):
+    updated_tag = routes.update_tag(
+        db=db, tag_id=tag_id, tag=tag
+    )
+    if not updated_tag:
+        raise HTTPException(status_code=404, detail="Tag nicht gefunden")
+    return updated_tag
+
+
+@app.delete("/tags/{tag_id}", response_model=Tag, tags=["Tags"])
+def delete_tag(tag_id: str, db: Session = Depends(get_db)):
+    deleted_tag = routes.delete_tag(db=db, tag_id=tag_id)
+    if not deleted_tag:
+        raise HTTPException(status_code=404, detail="Tag nicht gefunden")
+    return deleted_tag
