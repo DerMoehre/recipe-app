@@ -160,3 +160,7 @@ def read_recipe(recipe_id: str, db: Session = Depends(get_db)):
     if not db_recipe:
         raise HTTPException(status_code=404, detail="Rezept nicht gefunden")
     return db_recipe
+
+@app.get("/recipes/", response_model=list[Recipe], tags=["Recipes"])
+def read_all_recipes(skip: int= 0, limit: int = 100, db: Session = Depends(get_db)):
+    return routes.get_all_recipes(db=db, skip=skip, limit=limit)

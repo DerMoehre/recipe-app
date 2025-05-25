@@ -197,3 +197,16 @@ def get_recipe(db:Session, recipe_id: str):
         .filter(models.Recipe.id == recipe_id)
         .first()
     )
+
+def get_all_recipes(db:Session, skip: int = 0, limit: int = 100):
+    return (
+        db.query(models.Recipe)
+        .options(
+            selectinload(models.Recipe.recipe_ingredients).selectinload(models.RecipeIngredient.ingredient),
+            selectinload(models.Recipe.recipe_ingredients).selectinload(models.RecipeIngredient.unit),
+            selectinload(models.Recipe.tags)
+        )
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
