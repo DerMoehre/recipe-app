@@ -57,29 +57,34 @@ class Tag(TagBase):
 # RecipeIngredient Schemas
 class RecipeIngredientBase(BaseModel):
     quantity: float
-    unit: str
-
 
 class RecipeIngredientCreate(RecipeIngredientBase):
-    recipe_id: str
-    ingredient_id: str
+    recipe_id: str 
+    ingredient_id: str 
+    unit_id: Optional[str] = None 
 
 
 class RecipeIngredientUpdate(RecipeIngredientBase):
-    pass
+    unit_id: Optional[str] = None
 
 
 class RecipeIngredient(RecipeIngredientBase):
     recipe_id: str
     ingredient_id: str
-    unit_id: str
-    unit: Optional[Unit] = None
+    unit_id: Optional[str] = None 
+    unit: Optional[Unit] = None 
 
     class Config:
         orm_mode = True
 
 
-# Recipe Schemas
+class RecipeIngredientDetail(BaseModel):
+    ingredient_name: str
+    quantity: float      
+    unit_name: Optional[str] = None 
+
+
+# Recipe Schemas 
 class RecipeBase(BaseModel):
     name: str
     description: Optional[str] = None
@@ -89,21 +94,21 @@ class RecipeBase(BaseModel):
     prep_time: Optional[int] = None
     cook_time: Optional[int] = None
     servings: Optional[int] = None
-    #tags: List[Tag] = []
-
 
 class RecipeCreate(RecipeBase):
     tags: List[str] = []
+    ingredients: List[RecipeIngredientDetail] = []
+
 
 class RecipeUpdate(RecipeBase):
     tags: List[str] = []
-
+    ingredients: List[RecipeIngredientDetail] = []
 
 class Recipe(RecipeBase):
     id: str
     created_at: datetime
     updated_at: datetime
-    ingredients: List[Ingredient] = []
+    ingredients: List[Ingredient] = [] 
     tags: List[Tag] = []
 
     class Config:

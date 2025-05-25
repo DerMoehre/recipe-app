@@ -10,7 +10,9 @@ from .schemas import (
     UnitUpdate,
     Tag,
     TagCreate,
-    TagUpdate
+    TagUpdate,
+    Recipe,
+    RecipeCreate
 )
 from fastapi import HTTPException
 
@@ -27,6 +29,8 @@ def get_ingredient(db: Session, ingredient_id: str):
 def get_all_ingredients(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Ingredient).offset(skip).limit(limit).all()
 
+def get_ingredient_by_name(db: Session, name: str):
+    return db.query(models.Ingredient).filter(models.Ingredient.name == name).first()
 
 def create_ingredient(db: Session, ingredient: IngredientCreate):
     db_ingredient = (
@@ -83,6 +87,8 @@ def get_unit(db: Session, unit_id: str):
 def get_all_units(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Unit).offset(skip).limit(limit).all()
 
+def get_unit_by_name(db: Session, name: str):
+    return db.query(models.Unit).filter(models.Unit.name == name).first()
 
 def create_unit(db: Session, unit: UnitCreate):
     db_unit = (
@@ -140,6 +146,8 @@ def get_tag(db: Session, tag_id: str):
 def get_all_tags(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Tag).offset(skip).limit(limit).all()
 
+def get_tag_by_name(db: Session, name: str):
+    return db.query(models.Tag).filter(models.Tag.name == name).first()
 
 def create_tag(db: Session, tag: TagCreate):
     db_tag = (
@@ -210,3 +218,62 @@ def get_all_recipes(db:Session, skip: int = 0, limit: int = 100):
         .limit(limit)
         .all()
     )
+
+def create_recipe(db: Session, recipe: RecipeCreate):
+    db_recipe = (
+        db.query(models.Recipe)
+        .filter(models.Recipe.name == recipe.name)
+        .first()
+    )
+    if db_recipe:
+        raise HTTPException(
+            status_code=400, detail="Rezept mit diesem Namen existiert bereits"
+        )
+    db_recipe = models.Recipe(
+        name=recipe.name,
+        description=recipe.description,
+        instructions=recipe.instructions,
+        sauce_instructions=recipe.sauce_instructions,
+        calories=recipe.calories,
+        prep_time=recipe.prep_time,
+        cook_time=recipe.cook_time,
+        servings=recipe.servings,
+    )
+    db.add(db_recipe)
+    db.flush()
+
+    if recipe.tags:
+        for tag_name in recipe.tags:
+            db_tag = get_tag_by_name(db, name=tag_name)
+            if not db_tag:
+                db_tag = create_tag(db, tag=TagCreate(name=tag_name))
+
+            db_recipe_tag = models.RecipeTag(
+                recipe_id=db_recipe.id,
+                tag_id=db_tag.id
+            )
+            db.add(db_recipe_tag)
+
+    if recipe.ingredients:
+        for ri_data in recipe.ingredients:
+            db_ingredient = get_ingredient_by_name(db, name=ri_data.ingredient_name)
+            if not db_ingredient:
+                db_ingredient =create_ingredient(db, ingredient=IngredientCreate(name=ri_data.ingredient_name))
+
+            db_unit = None
+            if ri_data.unit_name:
+                db_unit = get_unit_by_name(db, name=ri_data.unit_name)
+                if not db_unit:
+                    db_unit = create_unit(db, unit=UnitCreate(name=ri_data.unit_name))
+
+            db_recipe_ingredient = models.RecipeIngredient(
+                recipe_id=db_recipe.id,
+                ingredient_id=db_ingredient.id,
+                quantity=ri_data.quantity,
+                unit_id=db_unit.id if db_unit else None
+            )
+            db.add(db_recipe_ingredient)
+
+    db.commit()
+    db.refresh(db_recipe)
+    return get_recipe(db, recipe_id=db_recipe.id)

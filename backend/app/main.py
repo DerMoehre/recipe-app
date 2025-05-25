@@ -14,7 +14,8 @@ from .schemas import (
     Tag,
     TagCreate,
     TagUpdate,
-    Recipe
+    Recipe,
+    RecipeCreate
 )
 
 app = FastAPI()
@@ -154,6 +155,11 @@ def delete_tag(tag_id: str, db: Session = Depends(get_db)):
     return deleted_tag
 
 # --- RECIPES ---
+@app.post("/recipes/", response_model=Recipe, tags=["Recipes"])
+def create_recipe(recipe: RecipeCreate, db: Session = Depends(get_db)):
+    return routes.create_recipe(db=db, recipe=recipe)
+
+
 @app.get("/recipes/{recipe_id}", response_model=Recipe, tags=["Recipes"])
 def read_recipe(recipe_id: str, db: Session = Depends(get_db)):
     db_recipe = routes.get_recipe(db=db, recipe_id=recipe_id)
